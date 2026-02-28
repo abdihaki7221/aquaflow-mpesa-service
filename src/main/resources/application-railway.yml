@@ -5,11 +5,6 @@ spring:
   application:
     name: aquaflow-mpesa-service
 
-    datasource:
-      url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
-      username: ${PGUSER}
-      password: ${PGPASSWORD}
-      driver-class-name: org.postgresql.Driver
 
   r2dbc:
     url: r2dbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}

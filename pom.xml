@@ -27,16 +27,8 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
 
-        <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-jdbc-test</artifactId>
-        <scope>test</scope>
-        </dependency>
+
         <!-- R2DBC for Reactive Postgres -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
