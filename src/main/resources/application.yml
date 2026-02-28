@@ -5,17 +5,20 @@ spring:
   application:
     name: aquaflow-mpesa-service
 
+
   r2dbc:
-    url: r2dbc:postgresql://${PGHOST:postgres.railway.internal}:${PGPORT:5432}/${PGDATABASE:aquaflow_mpesa}
-    username: ${PGUSER:postgres}
-    password: ${PGPASSWORD:postgres}
+    url: ${DATABASE_URL}
+    username: postgres
+    password: ezaKDBcPFExNWVmDNWPfyrkRRxvmWANd
+
+
 
   flyway:
-    url: jdbc:postgresql://${PGHOST:postgres.railway.internal}:${PGPORT:5432}/${PGDATABASE:aquaflow_mpesa}
-    user: ${PGUSER:postgres}
-    password: ${PGPASSWORD:postgres}
-    locations: classpath:db/migration
+    url: ${DATABASE_URL}
+    user: postgres
+    password: ezaKDBcPFExNWVmDNWPfyrkRRxvmWANd
     baseline-on-migrate: true
+    enabled: true
 
   jackson:
     default-property-inclusion: non_null
