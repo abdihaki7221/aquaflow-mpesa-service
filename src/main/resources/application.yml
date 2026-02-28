@@ -1,0 +1,74 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: aquaflow-mpesa-service
+
+  # R2DBC (reactive)
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/aquaflow_mpesa
+    username: postgres
+    password: postgres
+
+  # JDBC (for Flyway migrations only)
+  flyway:
+    url: jdbc:postgresql://localhost:5432/aquaflow_mpesa
+    user: postgres
+    password: postgres
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+
+# ──────────────────────────────────────────────
+# Safaricom Daraja API Configuration
+# ──────────────────────────────────────────────
+daraja:
+  # Base URL: Use sandbox for testing, production for live
+  base-url: https://sandbox.safaricom.co.ke
+  # base-url: https://api.safaricom.co.ke  # Production
+
+  # OAuth credentials from Daraja portal
+  consumer-key: YOUR_CONSUMER_KEY
+  consumer-secret: YOUR_CONSUMER_SECRET
+
+  # C2B Configuration
+  c2b:
+    shortcode: "600000"                     # Your paybill number
+    confirmation-url: https://yourdomain.com/api/v1/mpesa/c2b/confirmation
+    validation-url: https://yourdomain.com/api/v1/mpesa/c2b/validation
+    response-type: Completed                # Completed or Cancelled
+
+  # B2B Configuration
+  b2b:
+    initiator-name: testapi                 # API initiator username
+    security-credential: YOUR_ENCRYPTED_CREDENTIAL  # Encrypted initiator password
+    sender-shortcode: "600000"              # Your business shortcode (sender)
+    receiver-shortcode: "600001"            # Destination business shortcode
+    command-id: BusinessPayBill             # BusinessPayBill, BusinessBuyGoods, etc.
+    queue-timeout-url: https://yourdomain.com/api/v1/mpesa/b2b/timeout
+    result-url: https://yourdomain.com/api/v1/mpesa/b2b/result
+    disbursement-percentage: 50             # % of C2B amount to disburse via B2B
+
+# ──────────────────────────────────────────────
+# OpenAPI / Swagger
+# ──────────────────────────────────────────────
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+
+# ──────────────────────────────────────────────
+# Logging
+# ──────────────────────────────────────────────
+logging:
+  level:
+    com.aquaflow: DEBUG
+    org.springframework.web.reactive: DEBUG
+    org.springframework.r2dbc: DEBUG
