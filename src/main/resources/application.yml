@@ -6,12 +6,12 @@ spring:
     name: aquaflow-mpesa-service
 
   r2dbc:
-    url: r2dbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:aquaflow_mpesa}
+    url: r2dbc:postgresql://${PGHOST:postgres.railway.internal}:${PGPORT:5432}/${PGDATABASE:aquaflow_mpesa}
     username: ${PGUSER:postgres}
     password: ${PGPASSWORD:postgres}
 
   flyway:
-    url: jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:aquaflow_mpesa}
+    url: jdbc:postgresql://${PGHOST:postgres.railway.internal}:${PGPORT:5432}/${PGDATABASE:aquaflow_mpesa}
     user: ${PGUSER:postgres}
     password: ${PGPASSWORD:postgres}
     locations: classpath:db/migration
