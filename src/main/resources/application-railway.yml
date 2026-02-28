@@ -29,8 +29,8 @@ daraja:
   consumer-secret: ${DARAJA_CONSUMER_SECRET:ADIGXDAFOo4T5u4AGiWwBtGQkZyiviJYQwMlTCsceWAv9akkzZ5SrGQ34bZXo2T2}
   c2b:
     shortcode: ${DARAJA_C2B_SHORTCODE:4010159}
-    confirmation-url: ${DARAJA_C2B_CONFIRMATION_URL:https://aquaflow-mpesa-service-production-9f01.up.railway.app/api/v1/c2b/confirmation}
-    validation-url: ${DARAJA_C2B_VALIDATION_URL:https://aquaflow-mpesa-service-production-9f01.up.railway.app/api/v1/c2b/validation}
+    confirmation-url: ${DARAJA_C2B_CONFIRMATION_URL:https://aquaflow-service-production-9f01.up.railway.app/api/v1/c2b/confirmation}
+    validation-url: ${DARAJA_C2B_VALIDATION_URL:https://aquaflow-service-production-9f01.up.railway.app/api/v1/c2b/validation}
     response-type: ${DARAJA_C2B_RESPONSE_TYPE:Completed}
   b2b:
     initiator-name: ${DARAJA_B2B_INITIATOR:AO}
@@ -38,8 +38,8 @@ daraja:
     sender-shortcode: ${DARAJA_B2B_SENDER_SHORTCODE:4010159}
     receiver-shortcode: ${DARAJA_B2B_RECEIVER_SHORTCODE:3291545}
     command-id: ${DARAJA_B2B_COMMAND_ID:BusinessPayBill}
-    queue-timeout-url: ${DARAJA_B2B_TIMEOUT_URL:https://aquaflow-mpesa-service-production-9f01.up.railway.app/api/v1/b2b/timeout}
-    result-url: ${DARAJA_B2B_RESULT_URL:https://aquaflow-mpesa-service-production-9f01.up.railway.app/api/v1/b2b/result}
+    queue-timeout-url: ${DARAJA_B2B_TIMEOUT_URL:https://aquaflow-service-production-9f01.up.railway.app/api/v1/b2b/timeout}
+    result-url: ${DARAJA_B2B_RESULT_URL:https://aquaflow-service-production-9f01.up.railway.app/api/v1/b2b/result}
     disbursement-percentage: ${DARAJA_B2B_DISBURSEMENT_PCT:50}
 
 management:
