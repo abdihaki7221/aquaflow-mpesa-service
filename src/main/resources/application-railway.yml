@@ -6,18 +6,15 @@ spring:
   application:
     name: aquaflow-mpesa-service
 
-
   r2dbc:
-    url: ${DATABASE_URL}
-    username: postgres
-    password: ezaKDBcPFExNWVmDNWPfyrkRRxvmWANd
-
-
+    url: r2dbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:railway}
+    username: ${PGUSER:postgres}
+    password: ${PGPASSWORD:postgres}
 
   flyway:
-    url: ${DATABASE_URL}
-    user: postgres
-    password: ezaKDBcPFExNWVmDNWPfyrkRRxvmWANd
+    url: jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:railway}
+    user: ${PGUSER:postgres}
+    password: ${PGPASSWORD:postgres}
     baseline-on-migrate: true
     enabled: true
 
@@ -26,10 +23,6 @@ spring:
     serialization:
       write-dates-as-timestamps: false
 
-# ──────────────────────────────────────────────
-# Safaricom Daraja API Configuration
-# All values are read from Railway environment variables
-# ──────────────────────────────────────────────
 daraja:
   base-url: ${DARAJA_BASE_URL:https://sandbox.safaricom.co.ke}
   consumer-key: ${DARAJA_CONSUMER_KEY:YOUR_CONSUMER_KEY}
@@ -51,9 +44,6 @@ daraja:
     result-url: ${DARAJA_B2B_RESULT_URL:https://your-app.railway.app/api/v1/mpesa/b2b/result}
     disbursement-percentage: ${DARAJA_B2B_DISBURSEMENT_PCT:50}
 
-# ──────────────────────────────────────────────
-# Actuator (health checks for Railway)
-# ──────────────────────────────────────────────
 management:
   endpoints:
     web:
@@ -63,9 +53,6 @@ management:
     health:
       show-details: always
 
-# ──────────────────────────────────────────────
-# Swagger
-# ──────────────────────────────────────────────
 springdoc:
   api-docs:
     path: /api-docs
@@ -73,9 +60,6 @@ springdoc:
     path: /swagger-ui.html
     operations-sorter: method
 
-# ──────────────────────────────────────────────
-# Logging info
-# ──────────────────────────────────────────────
 logging:
   level:
     com.aquaflow: ${LOG_LEVEL:INFO}
