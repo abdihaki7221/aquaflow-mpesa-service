@@ -1,4 +1,4 @@
-# Stage 1: Build
+# Stage 1: Build (keep as-is)
 FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
 COPY pom.xml .
@@ -6,16 +6,16 @@ RUN mvn dependency:go-offline -B
 COPY src ./src
 RUN mvn clean package -DskipTests -B
 
-# Stage 2: Run
-FROM eclipse-temurin:21-jre-alpine
+# Stage 2: Run (switch to non-Alpine)
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 
-# Add non-root user for security
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+# Add non-root user for security (Debian syntax)
+RUN useradd -ms /bin/bash appuser
 
 COPY --from=build /app/target/*.jar app.jar
 
-RUN chown appuser:appgroup app.jar
+RUN chown appuser:appuser app.jar
 USER appuser
 
 EXPOSE 8080

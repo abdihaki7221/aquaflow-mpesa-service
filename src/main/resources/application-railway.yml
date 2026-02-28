@@ -72,7 +72,7 @@ springdoc:
     operations-sorter: method
 
 # ──────────────────────────────────────────────
-# Logging
+# Logging info
 # ──────────────────────────────────────────────
 logging:
   level:
