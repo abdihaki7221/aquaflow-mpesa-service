@@ -1,21 +1,19 @@
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 spring:
   application:
     name: aquaflow-mpesa-service
 
-  # R2DBC (reactive)
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/aquaflow_mpesa
-    username: postgres
-    password: postgres
+    url: r2dbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:aquaflow_mpesa}
+    username: ${PGUSER:postgres}
+    password: ${PGPASSWORD:postgres}
 
-  # JDBC (for Flyway migrations only)
   flyway:
-    url: jdbc:postgresql://localhost:5432/aquaflow_mpesa
-    user: postgres
-    password: postgres
+    url: jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:aquaflow_mpesa}
+    user: ${PGUSER:postgres}
+    password: ${PGPASSWORD:postgres}
     locations: classpath:db/migration
     baseline-on-migrate: true
 
@@ -24,39 +22,34 @@ spring:
     serialization:
       write-dates-as-timestamps: false
 
-# ──────────────────────────────────────────────
-# Safaricom Daraja API Configuration
-# ──────────────────────────────────────────────
 daraja:
-  # Base URL: Use sandbox for testing, production for live
-  base-url: https://sandbox.safaricom.co.ke
-  # base-url: https://api.safaricom.co.ke  # Production
-
-  # OAuth credentials from Daraja portal
-  consumer-key: YOUR_CONSUMER_KEY
-  consumer-secret: YOUR_CONSUMER_SECRET
-
-  # C2B Configuration
+  base-url: ${DARAJA_BASE_URL:https://sandbox.safaricom.co.ke}
+  consumer-key: ${DARAJA_CONSUMER_KEY:YOUR_CONSUMER_KEY}
+  consumer-secret: ${DARAJA_CONSUMER_SECRET:YOUR_CONSUMER_SECRET}
   c2b:
-    shortcode: "600000"                     # Your paybill number
-    confirmation-url: https://yourdomain.com/api/v1/mpesa/c2b/confirmation
-    validation-url: https://yourdomain.com/api/v1/mpesa/c2b/validation
-    response-type: Completed                # Completed or Cancelled
-
-  # B2B Configuration
+    shortcode: ${DARAJA_C2B_SHORTCODE:600000}
+    confirmation-url: ${DARAJA_C2B_CONFIRMATION_URL:https://yourdomain.com/api/v1/mpesa/c2b/confirmation}
+    validation-url: ${DARAJA_C2B_VALIDATION_URL:https://yourdomain.com/api/v1/mpesa/c2b/validation}
+    response-type: ${DARAJA_C2B_RESPONSE_TYPE:Completed}
   b2b:
-    initiator-name: testapi                 # API initiator username
-    security-credential: YOUR_ENCRYPTED_CREDENTIAL  # Encrypted initiator password
-    sender-shortcode: "600000"              # Your business shortcode (sender)
-    receiver-shortcode: "600001"            # Destination business shortcode
-    command-id: BusinessPayBill             # BusinessPayBill, BusinessBuyGoods, etc.
-    queue-timeout-url: https://yourdomain.com/api/v1/mpesa/b2b/timeout
-    result-url: https://yourdomain.com/api/v1/mpesa/b2b/result
-    disbursement-percentage: 50             # % of C2B amount to disburse via B2B
+    initiator-name: ${DARAJA_B2B_INITIATOR:testapi}
+    security-credential: ${DARAJA_B2B_SECURITY_CREDENTIAL:YOUR_ENCRYPTED_CREDENTIAL}
+    sender-shortcode: ${DARAJA_B2B_SENDER_SHORTCODE:600000}
+    receiver-shortcode: ${DARAJA_B2B_RECEIVER_SHORTCODE:600001}
+    command-id: ${DARAJA_B2B_COMMAND_ID:BusinessPayBill}
+    queue-timeout-url: ${DARAJA_B2B_TIMEOUT_URL:https://yourdomain.com/api/v1/mpesa/b2b/timeout}
+    result-url: ${DARAJA_B2B_RESULT_URL:https://yourdomain.com/api/v1/mpesa/b2b/result}
+    disbursement-percentage: ${DARAJA_B2B_DISBURSEMENT_PCT:50}
 
-# ──────────────────────────────────────────────
-# OpenAPI / Swagger
-# ──────────────────────────────────────────────
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
 springdoc:
   api-docs:
     path: /api-docs
@@ -64,11 +57,7 @@ springdoc:
     path: /swagger-ui.html
     operations-sorter: method
 
-# ──────────────────────────────────────────────
-# Logging
-# ──────────────────────────────────────────────
 logging:
   level:
-    com.aquaflow: DEBUG
-    org.springframework.web.reactive: DEBUG
-    org.springframework.r2dbc: DEBUG
+    com.aquaflow: ${LOG_LEVEL:INFO}
+    org.springframework.web.reactive: WARN

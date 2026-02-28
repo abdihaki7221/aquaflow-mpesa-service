@@ -1,0 +1,80 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: aquaflow-mpesa-service
+
+  # R2DBC - Railway provides DATABASE_URL, we construct R2DBC URL from env vars
+  r2dbc:
+    url: r2dbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:aquaflow_mpesa}
+    username: ${PGUSER:postgres}
+    password: ${PGPASSWORD:postgres}
+
+  # JDBC for Flyway migrations
+  flyway:
+    url: jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:aquaflow_mpesa}
+    user: ${PGUSER:postgres}
+    password: ${PGPASSWORD:postgres}
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+
+# ──────────────────────────────────────────────
+# Safaricom Daraja API Configuration
+# All values are read from Railway environment variables
+# ──────────────────────────────────────────────
+daraja:
+  base-url: ${DARAJA_BASE_URL:https://sandbox.safaricom.co.ke}
+  consumer-key: ${DARAJA_CONSUMER_KEY:YOUR_CONSUMER_KEY}
+  consumer-secret: ${DARAJA_CONSUMER_SECRET:YOUR_CONSUMER_SECRET}
+
+  c2b:
+    shortcode: ${DARAJA_C2B_SHORTCODE:600000}
+    confirmation-url: ${DARAJA_C2B_CONFIRMATION_URL:https://your-app.railway.app/api/v1/mpesa/c2b/confirmation}
+    validation-url: ${DARAJA_C2B_VALIDATION_URL:https://your-app.railway.app/api/v1/mpesa/c2b/validation}
+    response-type: ${DARAJA_C2B_RESPONSE_TYPE:Completed}
+
+  b2b:
+    initiator-name: ${DARAJA_B2B_INITIATOR:testapi}
+    security-credential: ${DARAJA_B2B_SECURITY_CREDENTIAL:YOUR_ENCRYPTED_CREDENTIAL}
+    sender-shortcode: ${DARAJA_B2B_SENDER_SHORTCODE:600000}
+    receiver-shortcode: ${DARAJA_B2B_RECEIVER_SHORTCODE:600001}
+    command-id: ${DARAJA_B2B_COMMAND_ID:BusinessPayBill}
+    queue-timeout-url: ${DARAJA_B2B_TIMEOUT_URL:https://your-app.railway.app/api/v1/mpesa/b2b/timeout}
+    result-url: ${DARAJA_B2B_RESULT_URL:https://your-app.railway.app/api/v1/mpesa/b2b/result}
+    disbursement-percentage: ${DARAJA_B2B_DISBURSEMENT_PCT:50}
+
+# ──────────────────────────────────────────────
+# Actuator (health checks for Railway)
+# ──────────────────────────────────────────────
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+# ──────────────────────────────────────────────
+# Swagger
+# ──────────────────────────────────────────────
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+
+# ──────────────────────────────────────────────
+# Logging
+# ──────────────────────────────────────────────
+logging:
+  level:
+    com.aquaflow: ${LOG_LEVEL:INFO}
+    org.springframework.web.reactive: WARN
