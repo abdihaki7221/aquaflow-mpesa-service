@@ -21,5 +21,5 @@ USER appuser
 EXPOSE 8080
 
 ENV SPRING_PROFILES_ACTIVE=railway
-
+#
 ENTRYPOINT ["sh", "-c", "java -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE} -Dserver.port=${PORT} -Dserver.address=0.0.0.0 -jar app.jar"]
