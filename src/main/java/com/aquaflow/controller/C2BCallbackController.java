@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/mpesa/c2b")
+@RequestMapping("/api/v1/c2b")
 @RequiredArgsConstructor
 @Tag(name = "C2B Callbacks", description = "Safaricom C2B callback endpoints and URL registration")
 public class C2BCallbackController {

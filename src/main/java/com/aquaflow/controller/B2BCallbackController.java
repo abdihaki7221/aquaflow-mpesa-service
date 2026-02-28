@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/mpesa/b2b")
+@RequestMapping("/api/v1/b2b")
 @RequiredArgsConstructor
 @Tag(name = "B2B Callbacks", description = "Safaricom B2B payment result and timeout callbacks")
 public class B2BCallbackController {
