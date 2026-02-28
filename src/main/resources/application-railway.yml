@@ -7,12 +7,12 @@ spring:
     name: aquaflow-mpesa-service
 
   r2dbc:
-    url: r2dbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:railway}
+    url: r2dbc:postgresql://${PGHOST:postgres.railway.internal}:${PGPORT:5432}/${PGDATABASE:railway}
     username: ${PGUSER:postgres}
     password: ${PGPASSWORD:postgres}
 
   flyway:
-    url: jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:railway}
+    url: jdbc:postgresql://${PGHOST:postgres.railway.internal}:${PGPORT:5432}/${PGDATABASE:railway}
     user: ${PGUSER:postgres}
     password: ${PGPASSWORD:postgres}
     baseline-on-migrate: true
@@ -27,21 +27,19 @@ daraja:
   base-url: ${DARAJA_BASE_URL:https://sandbox.safaricom.co.ke}
   consumer-key: ${DARAJA_CONSUMER_KEY:YOUR_CONSUMER_KEY}
   consumer-secret: ${DARAJA_CONSUMER_SECRET:YOUR_CONSUMER_SECRET}
-
   c2b:
     shortcode: ${DARAJA_C2B_SHORTCODE:600000}
-    confirmation-url: ${DARAJA_C2B_CONFIRMATION_URL:https://your-app.railway.app/api/v1/mpesa/c2b/confirmation}
-    validation-url: ${DARAJA_C2B_VALIDATION_URL:https://your-app.railway.app/api/v1/mpesa/c2b/validation}
+    confirmation-url: ${DARAJA_C2B_CONFIRMATION_URL:https://aquaflow-mpesa-service-production.up.railway.app/api/v1/mpesa/c2b/confirmation}
+    validation-url: ${DARAJA_C2B_VALIDATION_URL:https://aquaflow-mpesa-service-production.up.railway.app/api/v1/mpesa/c2b/validation}
     response-type: ${DARAJA_C2B_RESPONSE_TYPE:Completed}
-
   b2b:
     initiator-name: ${DARAJA_B2B_INITIATOR:testapi}
     security-credential: ${DARAJA_B2B_SECURITY_CREDENTIAL:YOUR_ENCRYPTED_CREDENTIAL}
     sender-shortcode: ${DARAJA_B2B_SENDER_SHORTCODE:600000}
     receiver-shortcode: ${DARAJA_B2B_RECEIVER_SHORTCODE:600001}
     command-id: ${DARAJA_B2B_COMMAND_ID:BusinessPayBill}
-    queue-timeout-url: ${DARAJA_B2B_TIMEOUT_URL:https://your-app.railway.app/api/v1/mpesa/b2b/timeout}
-    result-url: ${DARAJA_B2B_RESULT_URL:https://your-app.railway.app/api/v1/mpesa/b2b/result}
+    queue-timeout-url: ${DARAJA_B2B_TIMEOUT_URL:https://aquaflow-mpesa-service-production.up.railway.app/api/v1/mpesa/b2b/timeout}
+    result-url: ${DARAJA_B2B_RESULT_URL:https://aquaflow-mpesa-service-production.up.railway.app/api/v1/mpesa/b2b/result}
     disbursement-percentage: ${DARAJA_B2B_DISBURSEMENT_PCT:50}
 
 management:
