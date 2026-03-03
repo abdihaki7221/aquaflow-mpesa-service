@@ -24,7 +24,7 @@ spring:
       write-dates-as-timestamps: false
 
 daraja:
-  base-url: ${DARAJA_BASE_URL:https://sandbox.safaricom.co.ke}
+  base-url: ${DARAJA_BASE_URL:https://api.safaricom.co.ke}
   consumer-key: ${DARAJA_CONSUMER_KEY:0G83RG10zlwJ7R6beGViVWPZvmZy75I0ckmSXiftGGwPvDZt}
   consumer-secret: ${DARAJA_CONSUMER_SECRET:ADIGXDAFOo4T5u4AGiWwBtGQkZyiviJYQwMlTCsceWAv9akkzZ5SrGQ34bZXo2T2}
   c2b:
