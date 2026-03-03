@@ -45,7 +45,7 @@ public class C2BService {
 
         return authService.getAccessToken()
                 .flatMap(token -> darajaWebClient.post()
-                        .uri("/mpesa/c2b/v1/registerurl")
+                        .uri("/mpesa/c2b/v2/registerurl")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(request)
