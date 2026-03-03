@@ -25,8 +25,8 @@ spring:
 
 daraja:
   base-url: ${DARAJA_BASE_URL:https://api.safaricom.co.ke}
-  consumer-key: ${DARAJA_CONSUMER_KEY:0G83RG10zlwJ7R6beGViVWPZvmZy75I0ckmSXiftGGwPvDZt}
-  consumer-secret: ${DARAJA_CONSUMER_SECRET:ADIGXDAFOo4T5u4AGiWwBtGQkZyiviJYQwMlTCsceWAv9akkzZ5SrGQ34bZXo2T2}
+  consumer-key: ${DARAJA_CONSUMER_KEY:GlD9zVKOmqdl32n4z5pe329UliERqbwxoZL8JwqTbqJcBZgX}
+  consumer-secret: ${DARAJA_CONSUMER_SECRET:LWg5GnyaNwi9psh4aonQH11kAUsMXpbgGGuSXRHkm42HGGMncPMwwzq27pP3kSvS}
   c2b:
     shortcode: ${DARAJA_C2B_SHORTCODE:4010159}
     confirmation-url: ${DARAJA_C2B_CONFIRMATION_URL:https://aquaflow-service-production-9f01.up.railway.app/api/v1/c2b/confirmation}
