@@ -14,7 +14,7 @@
     <name>AquaFlow M-Pesa Service</name>
     <description>Water billing and M-Pesa integration service</description>
     <properties>
-        <java.version>21</java.version>
+        <java.version>17</java.version>
     </properties>
     <dependencies>
         <!-- WebFlux (reactive) -->
