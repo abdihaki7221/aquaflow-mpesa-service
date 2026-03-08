@@ -15,7 +15,7 @@ spring:
     url: jdbc:postgresql://ballast.proxy.rlwy.net:22738/railway
     user: postgres
     password: GcdLamzIxDzNgOiMJvTkkpYkvGmLwGHq
-    baseline-on-migrate: true
+    baseline-on-migrate: false
     enabled: true
 
   jackson:
