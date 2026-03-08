@@ -1,16 +1,11 @@
 package com.aquaflow.repository;
 
 import com.aquaflow.entity.B2BTransaction;
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.r2dbc.repository.R2dbcRepository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Repository
-public interface B2BTransactionRepository extends ReactiveCrudRepository<B2BTransaction, Long> {
-
+public interface B2BTransactionRepository extends R2dbcRepository<B2BTransaction, Long> {
     Mono<B2BTransaction> findByConversationId(String conversationId);
-
-    Mono<B2BTransaction> findByOriginatorConversationId(String originatorConversationId);
-
-    Mono<B2BTransaction> findByC2bTransactionId(Long c2bTransactionId);
+    Flux<B2BTransaction> findByC2bTransactionId(Long c2bTransactionId);
 }

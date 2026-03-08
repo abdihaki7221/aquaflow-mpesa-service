@@ -1,8 +1,2 @@
 package com.aquaflow.enums;
-
-public enum B2BTransactionStatus {
-    INITIATED,
-    SUCCESS,
-    FAILED,
-    TIMEOUT
-}
+public enum B2BTransactionStatus { PENDING, SUCCESS, FAILED, TIMEOUT }

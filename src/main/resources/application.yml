@@ -31,34 +31,36 @@ daraja:
     shortcode: ${DARAJA_C2B_SHORTCODE:4010159}
     confirmation-url: ${DARAJA_C2B_CONFIRMATION_URL:https://aquaflow-service-production-9f01.up.railway.app/api/v1/c2b/confirmation}
     validation-url: ${DARAJA_C2B_VALIDATION_URL:https://aquaflow-service-production-9f01.up.railway.app/api/v1/c2b/validation}
-    response-type: ${DARAJA_C2B_RESPONSE_TYPE:Completed}
   b2b:
     initiator-name: ${DARAJA_B2B_INITIATOR:AO}
     security-credential: ${DARAJA_B2B_SECURITY_CREDENTIAL:KDT5QkB6dan0vhqV+vFTM7/aJNfVhq7httTRZSQeQC8hZa2SVwvwa6JFz4m1/2gG+hYitMyKlJKcQaa85EXVu7nPbkNMXmLE3X/RH/4VIv6hGtzZvlOA6H0+Zpplzs0e/fdiMs9BSG1oHrRlMFYD4LVKysjWu9K+AvTjBPCWQEi24D0DAsTW800iYbZM0rPniVvA9POSVqAWI56fr/9UefeRbr8/rJxnx7jMOvAePlcZX2bPkBWh81tmkXYs4Vc7IACGzAO3cC6AI9IwNZZokeDuWBiSFzOgbI/4s621F2294SFIDjablYJDHzaMn9JS7j9axH2Snj6r1GMlnoFmMQ==}
     sender-shortcode: ${DARAJA_B2B_SENDER_SHORTCODE:4010159}
     receiver-shortcode: ${DARAJA_B2B_RECEIVER_SHORTCODE:3291545}
-    command-id: ${DARAJA_B2B_COMMAND_ID:BusinessPayBill}
     queue-timeout-url: ${DARAJA_B2B_TIMEOUT_URL:https://aquaflow-service-production-9f01.up.railway.app/api/v1/b2b/timeout}
     result-url: ${DARAJA_B2B_RESULT_URL:https://aquaflow-service-production-9f01.up.railway.app/api/v1/b2b/result}
     disbursement-percentage: ${DARAJA_B2B_DISBURSEMENT_PCT:50}
+  stk:
+    shortcode: ${STK_SHORTCODE:4010159}
+    passkey: ${STK_PASSKEY:aa8ac9f83d70479cd5e3e00095275b6dafc6500343d404e160556612a4965c2a}
+    callback-url: ${STK_CALLBACK_URL:https://aquaflow-service-production-9f01.up.railway.app/api/v1/callback}
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
-  endpoint:
-    health:
-      show-details: always
+aquaflow:
+  water-tariff:
+    tier1-limit: 6
+    tier1-rate: 45
+    tier2-limit: 20
+    tier2-rate: 55
+    tier3-limit: 50
+    tier3-rate: 70
+    tier4-rate: 80
 
 springdoc:
   api-docs:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
-    operations-sorter: method
 
 logging:
   level:
-    com.aquaflow: ${LOG_LEVEL:INFO}
-    org.springframework.web.reactive: WARN
+    com.aquaflow: DEBUG
+    org.springframework.web: INFO

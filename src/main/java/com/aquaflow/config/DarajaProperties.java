@@ -8,19 +8,18 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "daraja")
 public class DarajaProperties {
-
     private String baseUrl;
     private String consumerKey;
     private String consumerSecret;
     private C2B c2b = new C2B();
     private B2B b2b = new B2B();
+    private STK stk = new STK();
 
     @Data
     public static class C2B {
         private String shortcode;
         private String confirmationUrl;
         private String validationUrl;
-        private String responseType;
     }
 
     @Data
@@ -29,9 +28,15 @@ public class DarajaProperties {
         private String securityCredential;
         private String senderShortcode;
         private String receiverShortcode;
-        private String commandId;
+        private int disbursementPercentage = 50;
         private String queueTimeoutUrl;
         private String resultUrl;
-        private int disbursementPercentage = 50;
+    }
+
+    @Data
+    public static class STK {
+        private String shortcode;
+        private String passkey;
+        private String callbackUrl;
     }
 }

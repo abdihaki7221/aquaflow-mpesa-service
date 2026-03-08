@@ -1,8 +1,2 @@
 package com.aquaflow.enums;
-
-public enum TransactionStatus {
-    RECEIVED,
-    VALIDATED,
-    CONFIRMED,
-    FAILED
-}
+public enum TransactionStatus { VALIDATED, CONFIRMED, FAILED, REVERSED }
