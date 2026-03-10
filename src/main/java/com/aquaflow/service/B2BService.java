@@ -72,7 +72,7 @@ public class B2BService {
                     B2BPaymentRequest req = B2BPaymentRequest.builder()
                             .initiator(props.getB2b().getInitiatorName())
                             .securityCredential(props.getB2b().getSecurityCredential())
-                            .commandID("BusinessPayBill")
+                            .commandID("BusinessBuyGoods")
                             .senderIdentifierType("4")
                             .recieverIdentifierType("4")
                             .amount(disbursementAmount.toPlainString())
