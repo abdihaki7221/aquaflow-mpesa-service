@@ -61,12 +61,29 @@ public class C2BService {
         return c2bRepo.findByTransId(payload.getTransID())
                 .switchIfEmpty(Mono.defer(() -> {
                     log.info("[C2B] No existing record for TransID={}, creating new CONFIRMED record", payload.getTransID());
+                    String firstName = payload.getFirstName();
+                    String middleName = payload.getMiddleName();
+                    String lastName = payload.getLastName();
+
+                    if (firstName == null) firstName = "";
+                    if (middleName == null) middleName = "";
+                    if (lastName == null) lastName = "";
+
                     C2BTransaction txn = C2BTransaction.builder()
-                            .transactionType(payload.getTransactionType()).transId(payload.getTransID())
-                            .transTime(payload.getTransTime()).transAmount(payload.getTransAmount())
-                            .businessShortCode(payload.getBusinessShortCode()).billRefNumber(payload.getBillRefNumber())
-                            .msisdn(payload.getMsisdn()).firstName(payload.getFirstName()).middleName(payload.getMiddleName())
-                            .lastName(payload.getLastName()).status("CONFIRMED").b2bDisbursed(false).createdAt(LocalDateTime.now()).build();
+                            .transactionType(payload.getTransactionType())
+                            .transId(payload.getTransID())
+                            .transTime(payload.getTransTime())
+                            .transAmount(payload.getTransAmount())
+                            .businessShortCode(payload.getBusinessShortCode())
+                            .billRefNumber(payload.getBillRefNumber())
+                            .msisdn(payload.getMsisdn())
+                            .firstName(firstName)
+                            .middleName(middleName)
+                            .lastName(lastName)
+                            .status("CONFIRMED")
+                            .b2bDisbursed(false)
+                            .createdAt(LocalDateTime.now())
+                            .build();
                     return c2bRepo.save(txn);
                 }))
                 .flatMap(txn -> {
