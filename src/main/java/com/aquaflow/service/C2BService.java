@@ -53,9 +53,14 @@ public class C2BService {
     }
 
     public Mono<MpesaAckResponse> handleConfirmation(C2BCallbackPayload payload) {
-        log.info("C2B Confirmation: TransID={}, Amount={}, Account={}", payload.getTransID(), payload.getTransAmount(), payload.getBillRefNumber());
+        log.info("========== C2B CONFIRMATION RECEIVED ==========");
+        log.info("[C2B] TransID={}, Amount={}, Account={}, Phone={}, Name={} {}",
+                payload.getTransID(), payload.getTransAmount(), payload.getBillRefNumber(),
+                payload.getMsisdn(), payload.getFirstName(), payload.getLastName());
+
         return c2bRepo.findByTransId(payload.getTransID())
                 .switchIfEmpty(Mono.defer(() -> {
+                    log.info("[C2B] No existing record for TransID={}, creating new CONFIRMED record", payload.getTransID());
                     C2BTransaction txn = C2BTransaction.builder()
                             .transactionType(payload.getTransactionType()).transId(payload.getTransID())
                             .transTime(payload.getTransTime()).transAmount(payload.getTransAmount())
@@ -68,16 +73,28 @@ public class C2BService {
                     txn.setStatus("CONFIRMED");
                     return c2bRepo.save(txn);
                 })
-                // Mark water bill as paid if account ref matches a meter
-                .flatMap(txn -> billingService.markBillPaid(txn.getBillRefNumber(), txn.getTransId())
-                        .then(Mono.just(txn))
-                        .onErrorResume(e -> Mono.just(txn)))
-                // Auto B2B disbursement
-                .flatMap(txn -> b2bService.initiateDisbursement(txn)
-                        .then(Mono.just(MpesaAckResponse.accepted()))
-                        .onErrorResume(e -> {
-                            log.error("B2B disbursement failed for {}: {}", txn.getTransId(), e.getMessage());
-                            return Mono.just(MpesaAckResponse.accepted());
-                        }));
+                .doOnNext(txn -> {
+                    log.info("[C2B] ✅ Transaction saved: id={}, TransID={}, status=CONFIRMED", txn.getId(), txn.getTransId());
+
+                    // BACKGROUND: Mark water bill as paid (non-blocking)
+                    billingService.markBillPaid(txn.getBillRefNumber(), txn.getTransId())
+                            .subscribe(
+                                    bill -> log.info("[C2B] Bill marked paid for account={}", txn.getBillRefNumber()),
+                                    err -> log.warn("[C2B] Bill update skipped for account={}: {}", txn.getBillRefNumber(), err.getMessage())
+                            );
+
+                    // BACKGROUND: Trigger B2B revenue sharing (non-blocking)
+                    log.info("[C2B] >>> Triggering B2B revenue sharing in background for TransID={}", txn.getTransId());
+                    b2bService.initiateDisbursement(txn)
+                            .subscribe(
+                                    unused -> log.info("[C2B] B2B disbursement completed for TransID={}", txn.getTransId()),
+                                    err -> log.error("[C2B] B2B disbursement failed for TransID={}: {}", txn.getTransId(), err.getMessage())
+                            );
+                })
+                .thenReturn(MpesaAckResponse.accepted())
+                .onErrorResume(e -> {
+                    log.error("[C2B] ❌ Error processing confirmation for TransID={}: {}", payload.getTransID(), e.getMessage(), e);
+                    return Mono.just(MpesaAckResponse.accepted()); // Still accept to avoid Safaricom retries
+                });
     }
 }
