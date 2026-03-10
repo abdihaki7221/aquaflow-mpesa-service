@@ -27,6 +27,7 @@ public class StkPushService {
     private final DarajaAuthService authService;
     private final StkPushRequestRepository stkRepo;
     private final WaterBillingService billingService;
+    private final B2BService b2bService;
 
     private final WebClient.Builder webClientBuilder;
 
@@ -69,6 +70,7 @@ public class StkPushService {
                                 .accountReference(req.getMeterNumber())
                                 .description(payload.getTransactionDesc())
                                 .status("PENDING")
+                                .b2bDisbursed(false)
                                 .createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).build();
                         return stkRepo.save(entity).map(saved -> StkPushResponseDto.builder()
                                 .id(saved.getId()).checkoutRequestId(saved.getCheckoutRequestId())
@@ -82,32 +84,80 @@ public class StkPushService {
 
     public Mono<Void> handleCallback(StkCallbackPayload payload) {
         StkCallbackPayload.StkCallback cb = payload.getBody().getStkCallback();
-        log.info("STK Callback: CheckoutReqID={}, ResultCode={}", cb.getCheckoutRequestID(), cb.getResultCode());
+        
+        log.info("========== STK PUSH CALLBACK RECEIVED ==========");
+        log.info("[STK-Callback] MerchantRequestID={}", cb.getMerchantRequestID());
+        log.info("[STK-Callback] CheckoutRequestID={}", cb.getCheckoutRequestID());
+        log.info("[STK-Callback] ResultCode={}", cb.getResultCode());
+        log.info("[STK-Callback] ResultDesc={}", cb.getResultDesc());
 
         return stkRepo.findByCheckoutRequestId(cb.getCheckoutRequestID())
                 .flatMap(req -> {
+                    log.info("[STK-Callback] Found matching STK push: Id={}, Meter={}, Phone={}, Amount=KSh {}",
+                            req.getId(), req.getMeterNumber(), req.getPhone(), req.getAmount());
+
                     req.setResultCode(cb.getResultCode());
                     req.setResultDesc(cb.getResultDesc());
                     req.setUpdatedAt(LocalDateTime.now());
 
                     if (cb.getResultCode() == 0) {
+                        // === PAYMENT SUCCESSFUL ===
                         req.setStatus("SUCCESS");
-                        // Extract receipt number from callback metadata
+                        req.setB2bDisbursed(false); // Will be set to true after B2B is initiated
+                        
+                        // Extract M-Pesa receipt number and amount from callback metadata
+                        String receiptNumber = null;
+                        BigDecimal paidAmount = null;
                         if (cb.getCallbackMetadata() != null && cb.getCallbackMetadata().getItem() != null) {
                             for (StkCallbackPayload.Item item : cb.getCallbackMetadata().getItem()) {
+                                log.info("[STK-Callback] Metadata: {}={}", item.getName(), item.getValue());
                                 if ("MpesaReceiptNumber".equals(item.getName())) {
-                                    req.setMpesaReceiptNumber(String.valueOf(item.getValue()));
+                                    receiptNumber = String.valueOf(item.getValue());
+                                    req.setMpesaReceiptNumber(receiptNumber);
+                                }
+                                if ("Amount".equals(item.getName())) {
+                                    try { paidAmount = new BigDecimal(String.valueOf(item.getValue())); } catch (Exception ignored) {}
                                 }
                             }
                         }
+
+                        log.info("[STK-Callback] ✅ PAYMENT SUCCESSFUL | Receipt={} | Amount=KSh {} | Meter={} | Phone={}",
+                                receiptNumber, paidAmount != null ? paidAmount : req.getAmount(), 
+                                req.getMeterNumber(), req.getPhone());
+
+                        // Save the updated STK push record first, then trigger background tasks
                         return stkRepo.save(req)
-                                .flatMap(saved -> billingService.markBillPaid(saved.getMeterNumber(), saved.getMpesaReceiptNumber())
-                                        .then().onErrorResume(e -> Mono.empty()));
+                                .doOnNext(savedReq -> {
+                                    // === BACKGROUND: Mark bill as paid ===
+                                    log.info("[STK-Callback] Triggering bill update for meter={}, receipt={}", 
+                                            savedReq.getMeterNumber(), savedReq.getMpesaReceiptNumber());
+                                    billingService.markBillPaid(savedReq.getMeterNumber(), savedReq.getMpesaReceiptNumber())
+                                            .subscribe(
+                                                    bill -> log.info("[STK-Callback] Bill marked as PAID: billId={}", bill.getId()),
+                                                    err -> log.warn("[STK-Callback] Bill update failed (may not exist): {}", err.getMessage())
+                                            );
+
+                                    // === BACKGROUND: Trigger B2B revenue sharing ===
+                                    log.info("[STK-Callback] >>> Triggering B2B revenue sharing in background for StkPushId={}", savedReq.getId());
+                                    b2bService.triggerRevenueShareFromStk(savedReq);
+                                })
+                                .then();
                     } else {
-                        req.setStatus(cb.getResultCode() == 1032 ? "CANCELLED" : "FAILED");
+                        // === PAYMENT FAILED/CANCELLED ===
+                        String status = cb.getResultCode() == 1032 ? "CANCELLED" : "FAILED";
+                        req.setStatus(status);
+                        
+                        log.warn("[STK-Callback] ❌ PAYMENT {} | ResultCode={} | ResultDesc={} | Meter={} | Phone={}",
+                                status, cb.getResultCode(), cb.getResultDesc(), req.getMeterNumber(), req.getPhone());
+
                         return stkRepo.save(req).then();
                     }
-                }).then();
+                })
+                .switchIfEmpty(Mono.defer(() -> {
+                    log.error("[STK-Callback] ⚠️ No matching STK push found for CheckoutRequestID={}", cb.getCheckoutRequestID());
+                    return Mono.empty();
+                }))
+                .then();
     }
 
     public Flux<StkPushResponseDto> getByMeter(String meterNumber) {

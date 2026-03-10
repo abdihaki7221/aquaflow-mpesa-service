@@ -8,4 +8,6 @@ import reactor.core.publisher.Mono;
 public interface B2BTransactionRepository extends R2dbcRepository<B2BTransaction, Long> {
     Mono<B2BTransaction> findByConversationId(String conversationId);
     Flux<B2BTransaction> findByC2bTransactionId(Long c2bTransactionId);
+    Flux<B2BTransaction> findByStkPushRequestId(Long stkPushRequestId);
+    Flux<B2BTransaction> findAllByOrderByCreatedAtDesc();
 }

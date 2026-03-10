@@ -29,9 +29,16 @@ public class StkPushController {
     }
 
     @PostMapping("/callback")
-    @Operation(summary = "STK Push callback (from Safaricom)")
+    @Operation(summary = "STK Push callback (from Safaricom) - responds immediately, processes in background")
     public Mono<MpesaAckResponse> callback(@RequestBody StkCallbackPayload payload) {
-        return stkService.handleCallback(payload).thenReturn(MpesaAckResponse.accepted());
+        // Fire-and-forget: process the callback in the background
+        // Respond to Safaricom immediately with ResultCode 0
+        stkService.handleCallback(payload)
+                .subscribe(
+                        unused -> {},
+                        error -> {} // Errors are logged inside handleCallback
+                );
+        return Mono.just(MpesaAckResponse.accepted());
     }
 
     @GetMapping("/status/{checkoutRequestId}")

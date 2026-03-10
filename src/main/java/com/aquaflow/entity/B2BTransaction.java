@@ -11,11 +11,14 @@ import java.time.LocalDateTime;
 public class B2BTransaction {
     @Id private Long id;
     private Long c2bTransactionId;
+    private Long stkPushRequestId;
+    private String sourceType; // "C2B" or "STK"
     private String conversationId;
     private String originatorConversationId;
     private BigDecimal amount;
     private String senderShortcode;
     private String receiverShortcode;
+    private String accountReference;
     private String status;
     private Integer resultCode;
     private String resultDesc;

@@ -21,6 +21,8 @@ public class StkPushRequest {
     private Integer resultCode;
     private String resultDesc;
     private String mpesaReceiptNumber;
+    private Boolean b2bDisbursed;
+    private Long b2bTransactionId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
