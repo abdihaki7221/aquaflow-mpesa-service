@@ -116,6 +116,7 @@ public class B2BService {
                                 log.info("[B2B] Saving B2B transaction record: ConvId={}, Amount={}, Status=PENDING",
                                         b2b.getConversationId(), b2b.getAmount());
 
+                                //send sms for meter successfull payment
                                 return b2bRepo.save(b2b)
                                         .flatMap(savedB2b -> {
                                             // Update STK push request to mark it as disbursed
