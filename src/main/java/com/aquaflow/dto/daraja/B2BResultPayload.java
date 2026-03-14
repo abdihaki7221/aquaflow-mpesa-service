@@ -5,15 +5,29 @@ import java.util.Map;
 
 @Data
 public class B2BResultPayload {
-    @JsonProperty("Result") private Result result;
+
+    @JsonProperty("Result")
+    private Result result;
 
     @Data
     public static class Result {
-        @JsonProperty("ResultType") private Integer resultType;
-        @JsonProperty("ResultCode") private Integer resultCode;
-        @JsonProperty("ResultDesc") private String resultDesc;
-        @JsonProperty("OriginatorConversationID") private String originatorConversationID;
-        @JsonProperty("ConversationID") private String conversationID;
-        @JsonProperty("TransactionID") private String transactionID;
+
+        @JsonProperty("ResultType")
+        private Integer resultType;
+
+        @JsonProperty("ResultCode")
+        private String resultCode;   // FIXED
+
+        @JsonProperty("ResultDesc")
+        private String resultDesc;
+
+        @JsonProperty("OriginatorConversationID")
+        private String originatorConversationID;
+
+        @JsonProperty("ConversationID")
+        private String conversationID;
+
+        @JsonProperty("TransactionID")
+        private String transactionID;
     }
 }
