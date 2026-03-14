@@ -15,7 +15,7 @@ spring:
     url: jdbc:postgresql://ballast.proxy.rlwy.net:22738/railway
     user: postgres
     password: GcdLamzIxDzNgOiMJvTkkpYkvGmLwGHq
-    baseline-on-migrate: true
+    baseline-on-migrate: false
     enabled: true
 
   jackson:
@@ -32,8 +32,8 @@ daraja:
     confirmation-url: ${DARAJA_C2B_CONFIRMATION_URL:https://aquaflow-service-production-9f01.up.railway.app/api/v1/c2b/confirmation}
     validation-url: ${DARAJA_C2B_VALIDATION_URL:https://aquaflow-service-production-9f01.up.railway.app/api/v1/c2b/validation}
   b2b:
-    initiator-name: ${DARAJA_B2B_INITIATOR:AO}
-    security-credential: ${DARAJA_B2B_SECURITY_CREDENTIAL:KDT5QkB6dan0vhqV+vFTM7/aJNfVhq7httTRZSQeQC8hZa2SVwvwa6JFz4m1/2gG+hYitMyKlJKcQaa85EXVu7nPbkNMXmLE3X/RH/4VIv6hGtzZvlOA6H0+Zpplzs0e/fdiMs9BSG1oHrRlMFYD4LVKysjWu9K+AvTjBPCWQEi24D0DAsTW800iYbZM0rPniVvA9POSVqAWI56fr/9UefeRbr8/rJxnx7jMOvAePlcZX2bPkBWh81tmkXYs4Vc7IACGzAO3cC6AI9IwNZZokeDuWBiSFzOgbI/4s621F2294SFIDjablYJDHzaMn9JS7j9axH2Snj6r1GMlnoFmMQ==}
+    initiator-name: ${DARAJA_B2B_INITIATOR:ISSANDRO7221}
+    security-credential: ${DARAJA_B2B_SECURITY_CREDENTIAL:b7u/o1NBfJ7G5yfBbHqyO2TrtCjL2PspXDgXm9DZlGKzZS4PmtxYK1vJTdKs5dhfX0/50dF37TQTSED9OYOoOLg1gd2fxUCmp1mNofVTg9P83s2ncYjSdGlWjzXQwML4RvC+UxloInxGuv4Snai13VFpcXZjb6aqjA8xuRAZJjKtSt9TqHIWHS8GSByhOaeHdRyQtJg5hFusT1YXYNkMJhDeKt8ASuf/N6BOcEvsdiWXOcp3fQV49+wuYtR5k3aJg4EqNvvG/caM+G1e+e+MBbwRomhRLOtd1b+uXNG7v5WtqGROLIJx3QedkF4BvaCRfmoqcUEy9cJVNDIIa3xpkA==}
     sender-shortcode: ${DARAJA_B2B_SENDER_SHORTCODE:4010159}
     receiver-shortcode: ${DARAJA_B2B_RECEIVER_SHORTCODE:3291545}
     queue-timeout-url: ${DARAJA_B2B_TIMEOUT_URL:https://aquaflow-service-production-9f01.up.railway.app/api/v1/b2b/timeout}
