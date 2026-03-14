@@ -89,14 +89,62 @@ public class B2BService {
                     log.debug("[B2B] Request payload: Initiator={}, CommandID={}, PartyA={}, PartyB={}, Amount={}",
                             req.getInitiator(), req.getCommandID(), req.getPartyA(), req.getPartyB(), req.getAmount());
 
+                    log.info("========== B2B REQUEST PAYLOAD ==========");
+                    log.info("[B2B] Initiator: {}", req.getInitiator());
+                    log.info("[B2B] CommandID: {}", req.getCommandID());
+                    log.info("[B2B] SenderIdentifierType: {}", req.getSenderIdentifierType());
+                    log.info("[B2B] ReceiverIdentifierType: {}", req.getRecieverIdentifierType());
+                    log.info("[B2B] PartyA (Sender): {}", req.getPartyA());
+                    log.info("[B2B] PartyB (Receiver): {}", req.getPartyB());
+                    log.info("[B2B] Amount: {}", req.getAmount());
+                    log.info("[B2B] AccountReference: {}", req.getAccountReference());
+                    log.info("[B2B] Remarks: {}", req.getRemarks());
+                    log.info("==========================================");
+
                     return webClientBuilder.build().post()
                             .uri(props.getBaseUrl() + "/mpesa/b2b/v1/paymentrequest")
                             .header("Authorization", "Bearer " + token)
                             .bodyValue(req)
-                            .retrieve()
-                            .bodyToMono(B2BPaymentResponse.class)
-                            .doOnNext(resp -> log.info("[B2B] Daraja API response: ConversationID={}, ResponseCode={}, ResponseDesc={}",
-                                    resp.getConversationID(), resp.getResponseCode(), resp.getResponseDescription()))
+                            .exchangeToMono(response -> {
+
+                                log.info("[B2B] Daraja HTTP Status: {}", response.statusCode());
+
+                                return response.bodyToMono(String.class)
+                                        .flatMap(body -> {
+
+                                            log.info("========== DARAJA B2B RAW RESPONSE ==========");
+                                            log.info("[B2B] Response Body: {}", body);
+                                            log.info("==============================================");
+
+                                            if (response.statusCode().is2xxSuccessful()) {
+
+                                                try {
+                                                    B2BPaymentResponse parsed =
+                                                            new com.fasterxml.jackson.databind.ObjectMapper()
+                                                                    .readValue(body, B2BPaymentResponse.class);
+
+                                                    log.info("[B2B] Parsed Response | ConversationID={} | OriginatorConversationID={} | ResponseCode={} | ResponseDesc={}",
+                                                            parsed.getConversationID(),
+                                                            parsed.getOriginatorConversationID(),
+                                                            parsed.getResponseCode(),
+                                                            parsed.getResponseDescription());
+
+                                                    return Mono.just(parsed);
+
+                                                } catch (Exception parseError) {
+                                                    log.error("[B2B] Failed to parse Safaricom response: {}", parseError.getMessage());
+                                                    return Mono.error(parseError);
+                                                }
+
+                                            } else {
+
+                                                log.error("[B2B] ❌ Safaricom returned error HTTP status {}", response.statusCode());
+                                                log.error("[B2B] ❌ Error body: {}", body);
+
+                                                return Mono.error(new RuntimeException("Daraja API error: " + body));
+                                            }
+                                        });
+                            })
                             .flatMap(resp -> {
                                 // Save the B2B transaction record
                                 B2BTransaction b2b = B2BTransaction.builder()
@@ -192,10 +240,62 @@ public class B2BService {
                     .queueTimeOutURL(props.getB2b().getQueueTimeoutUrl())
                     .resultURL(props.getB2b().getResultUrl()).build();
 
+            log.info("========== B2B REQUEST PAYLOAD ==========");
+            log.info("[B2B] Initiator: {}", req.getInitiator());
+            log.info("[B2B] CommandID: {}", req.getCommandID());
+            log.info("[B2B] SenderIdentifierType: {}", req.getSenderIdentifierType());
+            log.info("[B2B] ReceiverIdentifierType: {}", req.getRecieverIdentifierType());
+            log.info("[B2B] PartyA (Sender): {}", req.getPartyA());
+            log.info("[B2B] PartyB (Receiver): {}", req.getPartyB());
+            log.info("[B2B] Amount: {}", req.getAmount());
+            log.info("[B2B] AccountReference: {}", req.getAccountReference());
+            log.info("[B2B] Remarks: {}", req.getRemarks());
+            log.info("==========================================");
+
             return webClientBuilder.build().post()
                     .uri(props.getBaseUrl() + "/mpesa/b2b/v1/paymentrequest")
                     .header("Authorization", "Bearer " + token)
-                    .bodyValue(req).retrieve().bodyToMono(B2BPaymentResponse.class)
+                    .bodyValue(req)
+                    .exchangeToMono(response -> {
+
+                        log.info("[B2B] Daraja HTTP Status: {}", response.statusCode());
+
+                        return response.bodyToMono(String.class)
+                                .flatMap(body -> {
+
+                                    log.info("========== DARAJA B2B RAW RESPONSE ==========");
+                                    log.info("[B2B] Response Body: {}", body);
+                                    log.info("==============================================");
+
+                                    if (response.statusCode().is2xxSuccessful()) {
+
+                                        try {
+                                            B2BPaymentResponse parsed =
+                                                    new com.fasterxml.jackson.databind.ObjectMapper()
+                                                            .readValue(body, B2BPaymentResponse.class);
+
+                                            log.info("[B2B] Parsed Response | ConversationID={} | OriginatorConversationID={} | ResponseCode={} | ResponseDesc={}",
+                                                    parsed.getConversationID(),
+                                                    parsed.getOriginatorConversationID(),
+                                                    parsed.getResponseCode(),
+                                                    parsed.getResponseDescription());
+
+                                            return Mono.just(parsed);
+
+                                        } catch (Exception parseError) {
+                                            log.error("[B2B] Failed to parse Safaricom response: {}", parseError.getMessage());
+                                            return Mono.error(parseError);
+                                        }
+
+                                    } else {
+
+                                        log.error("[B2B] ❌ Safaricom returned error HTTP status {}", response.statusCode());
+                                        log.error("[B2B] ❌ Error body: {}", body);
+
+                                        return Mono.error(new RuntimeException("Daraja API error: " + body));
+                                    }
+                                });
+                    })
                     .flatMap(resp -> {
                         B2BTransaction b2b = B2BTransaction.builder()
                                 .c2bTransactionId(c2bTxn.getId())
