@@ -110,8 +110,24 @@ public class C2BService {
                 })
                 .thenReturn(MpesaAckResponse.accepted())
                 .onErrorResume(e -> {
-                    log.error("[C2B] ❌ Error processing confirmation for TransID={}: {}", payload.getTransID(), e.getMessage(), e);
-                    return Mono.just(MpesaAckResponse.accepted()); // Still accept to avoid Safaricom retries
+
+                    Throwable root = e;
+                    while (root.getCause() != null) {
+                        root = root.getCause();
+                    }
+
+                    log.error("========== SQL ERROR DEBUG ==========");
+                    log.error("[C2B] TransID: {}", payload.getTransID());
+                    log.error("[C2B] Exception Type: {}", e.getClass().getName());
+                    log.error("[C2B] Message{}", String.valueOf(root));
+                    log.error("[C2B] Message: {}", e.getMessage());
+                    log.error("[C2B] Root Cause Type: {}", root.getClass().getName());
+                    log.error("[C2B] Root Cause Message: {}", root.getMessage());
+
+
+                    log.error("=====================================");
+
+                    return Mono.just(MpesaAckResponse.accepted());
                 });
     }
 }
