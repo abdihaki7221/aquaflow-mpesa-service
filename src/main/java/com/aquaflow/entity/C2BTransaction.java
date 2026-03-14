@@ -65,4 +65,6 @@ public class C2BTransaction {
 
     @Column("created_at")
     private LocalDateTime createdAt;
+    @Column("updated_at")
+    private LocalDateTime updatedAt;
 }
