@@ -229,13 +229,15 @@ public class B2BService {
                     b2b.setResultCode(result.getResultCode());
                     b2b.setResultDesc(result.getResultDesc());
                     b2b.setTransId(result.getTransactionID());
-                    b2b.setStatus(result.getResultCode() == 0 ? "SUCCESS" : "FAILED");
+                    boolean success = "0".equals(result.getResultCode());
+
+                    b2b.setStatus(success ? "SUCCESS" : "FAILED");
                     b2b.setUpdatedAt(LocalDateTime.now());
 
                     log.info("[B2B-Result] Updating B2B record: B2BId={}, Source={}, PreviousStatus={}, NewStatus={}, Amount=KSh {}",
                             b2b.getId(), b2b.getSourceType(), previousStatus, b2b.getStatus(), b2b.getAmount());
 
-                    if (result.getResultCode() == 0) {
+                    if (result.getResultCode().equals("0")) {
                         log.info("[B2B-Result] ✅ REVENUE SHARE SUCCESSFUL | {} → {} | Amount=KSh {} | MpesaTxnId={}",
                                 b2b.getSenderShortcode(), b2b.getReceiverShortcode(), b2b.getAmount(), result.getTransactionID());
                     } else {

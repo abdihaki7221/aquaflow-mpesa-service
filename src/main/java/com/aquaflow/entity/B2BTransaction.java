@@ -49,7 +49,7 @@ public class B2BTransaction {
     private String status;
 
     @Column("result_code")
-    private Integer resultCode;
+    private String resultCode;
 
     @Column("result_desc")
     private String resultDesc;
