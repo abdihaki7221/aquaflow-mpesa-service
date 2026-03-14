@@ -35,7 +35,7 @@ daraja:
     initiator-name: ${DARAJA_B2B_INITIATOR:ISSANDRO7221}
     security-credential: ${DARAJA_B2B_SECURITY_CREDENTIAL:b7u/o1NBfJ7G5yfBbHqyO2TrtCjL2PspXDgXm9DZlGKzZS4PmtxYK1vJTdKs5dhfX0/50dF37TQTSED9OYOoOLg1gd2fxUCmp1mNofVTg9P83s2ncYjSdGlWjzXQwML4RvC+UxloInxGuv4Snai13VFpcXZjb6aqjA8xuRAZJjKtSt9TqHIWHS8GSByhOaeHdRyQtJg5hFusT1YXYNkMJhDeKt8ASuf/N6BOcEvsdiWXOcp3fQV49+wuYtR5k3aJg4EqNvvG/caM+G1e+e+MBbwRomhRLOtd1b+uXNG7v5WtqGROLIJx3QedkF4BvaCRfmoqcUEy9cJVNDIIa3xpkA==}
     sender-shortcode: ${DARAJA_B2B_SENDER_SHORTCODE:4010159}
-    receiver-shortcode: ${DARAJA_B2B_RECEIVER_SHORTCODE:3291545}
+    receiver-shortcode: ${DARAJA_B2B_RECEIVER_SHORTCODE:150770}
     queue-timeout-url: ${DARAJA_B2B_TIMEOUT_URL:https://aquaflow-service-production-9f01.up.railway.app/api/v1/b2b/timeout}
     result-url: ${DARAJA_B2B_RESULT_URL:https://aquaflow-service-production-9f01.up.railway.app/api/v1/b2b/result}
     disbursement-percentage: ${DARAJA_B2B_DISBURSEMENT_PCT:50}
