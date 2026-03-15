@@ -9,4 +9,5 @@ public interface StkPushRequestRepository extends R2dbcRepository<StkPushRequest
     Mono<StkPushRequest> findByCheckoutRequestId(String checkoutRequestId);
     Flux<StkPushRequest> findByMeterNumber(String meterNumber);
     Flux<StkPushRequest> findByPhone(String phone);
+    Flux<StkPushRequest> findAllByOrderByCreatedAtDesc();
 }

@@ -2,6 +2,8 @@ package com.aquaflow.controller;
 
 import com.aquaflow.dto.response.ApiResponse;
 import com.aquaflow.dto.response.C2BTransactionResponse;
+import com.aquaflow.dto.response.StkPushResponseDto;
+import com.aquaflow.service.StkPushService;
 import com.aquaflow.service.TransactionQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,9 +16,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/transactions")
 @RequiredArgsConstructor
-@Tag(name = "Transactions", description = "Query C2B/B2B transactions")
+@Tag(name = "Transactions", description = "Query C2B/STK transactions")
 public class TransactionQueryController {
     private final TransactionQueryService queryService;
+    private final StkPushService stkPushService;
+
+    @GetMapping("/all")
+    @Operation(summary = "Get all STK push transactions (for admin/staff dashboard)")
+    public Mono<ApiResponse<List<StkPushResponseDto>>> getAll() {
+        return stkPushService.getAllTransactions().collectList().map(ApiResponse::ok);
+    }
 
     @GetMapping("/{transId}")
     @Operation(summary = "Get transaction by Safaricom reference ID")

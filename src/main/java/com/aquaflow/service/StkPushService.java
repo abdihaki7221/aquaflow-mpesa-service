@@ -168,6 +168,10 @@ public class StkPushService {
         return stkRepo.findByCheckoutRequestId(checkoutRequestId).map(this::toDto);
     }
 
+    public Flux<StkPushResponseDto> getAllTransactions() {
+        return stkRepo.findAllByOrderByCreatedAtDesc().map(this::toDto);
+    }
+
     private StkPushResponseDto toDto(StkPushRequest e) {
         return StkPushResponseDto.builder()
                 .id(e.getId()).checkoutRequestId(e.getCheckoutRequestId())
