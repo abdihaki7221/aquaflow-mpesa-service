@@ -31,30 +31,38 @@ public class DarajaAuthService {
                 (props.getConsumerKey() + ":" + props.getConsumerSecret()).getBytes(StandardCharsets.UTF_8));
 
         log.info("token endpoint {}/oauth/v1/generate?grant_type=client_credentials", props.getBaseUrl());
+        log.info("consumer key {}", props.getConsumerKey());
+        log.info("consumer secret {}", props.getConsumerSecret());
+
         return webClientBuilder.build()
                 .get()
                 .uri(props.getBaseUrl() + "/oauth/v1/generate?grant_type=client_credentials")
                 .header("Authorization", "Basic " + credentials)
-                .retrieve()
-                .bodyToMono(String.class)
-                .doOnNext(raw -> log.info("Daraja auth raw response: {}", raw))
-                .<DarajaAuthResponse>handle((raw, sink) -> {
-                    try {
-                        ObjectMapper mapper = new ObjectMapper();
-                        sink.next(mapper.readValue(raw, DarajaAuthResponse.class));
-                    } catch (Exception e) {
-                        sink.error(new DarajaApiException("Failed to parse Daraja auth response: " + raw, e));
-                    }
+                .exchangeToMono(response -> {
+                    log.info("Daraja auth status: {}", response.statusCode());
+                    return response.bodyToMono(String.class)
+                            .doOnNext(body -> log.info("Daraja auth raw response: {}", body))
+                            .flatMap(body -> {
+                                if (response.statusCode().is2xxSuccessful()) {
+                                    try {
+                                        ObjectMapper mapper = new ObjectMapper();
+                                        DarajaAuthResponse authResp = mapper.readValue(body, DarajaAuthResponse.class);
+                                        cachedToken = authResp.getAccessToken();
+                                        tokenExpiry = Instant.now().plusSeconds(Long.parseLong(authResp.getExpiresIn()) - 60);
+                                        log.info("Daraja token refreshed, expires in {}s", authResp.getExpiresIn());
+                                        return Mono.just(cachedToken);
+                                    } catch (Exception e) {
+                                        return Mono.error(new DarajaApiException("Failed to parse auth response: " + body, e));
+                                    }
+                                } else {
+                                    log.error("Daraja auth failed [{}]: {}", response.statusCode(), body);
+                                    return Mono.error(new DarajaApiException("Daraja auth failed: " + body, null));
+                                }
+                            });
                 })
-                .map(resp -> {
-                    cachedToken = resp.getAccessToken();
-                    tokenExpiry = Instant.now().plusSeconds(Long.parseLong(resp.getExpiresIn()) - 60);
-                    log.info("Daraja token refreshed, expires in {}s", resp.getExpiresIn());
-                    return cachedToken;
-                })
-                .onErrorMap(e -> {
-                    log.info("an error occurred {}", e.getMessage() + " caused by " + e.getCause());
-                    return new DarajaApiException("Failed to get Daraja access token", e.getCause());
+                .onErrorMap(e -> !(e instanceof DarajaApiException), e -> {
+                    log.error("Daraja auth error: {}", e.getMessage(), e);
+                    return new DarajaApiException("Failed to get Daraja access token", e);
                 });
     }
 }
