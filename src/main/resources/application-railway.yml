@@ -7,14 +7,14 @@ spring:
     name: aquaflow-mpesa-service
 
   r2dbc:
-    url: r2dbc:postgresql://ballast.proxy.rlwy.net:22738/railway
+    url: r2dbc:postgresql://maglev.proxy.rlwy.net:12542/railway
     username: postgres
-    password: GcdLamzIxDzNgOiMJvTkkpYkvGmLwGHq
+    password: nmNAHvfvjVfHMIsDLhKAbuzDcHcodyZx
 
   flyway:
-    url: jdbc:postgresql://ballast.proxy.rlwy.net:22738/railway
+    url: jdbc:postgresql://maglev.proxy.rlwy.net:12542/railway
     user: postgres
-    password: GcdLamzIxDzNgOiMJvTkkpYkvGmLwGHq
+    password: nmNAHvfvjVfHMIsDLhKAbuzDcHcodyZx
     baseline-on-migrate: false
     enabled: true
 
