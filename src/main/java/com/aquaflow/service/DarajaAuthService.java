@@ -29,6 +29,8 @@ public class DarajaAuthService {
         String credentials = Base64.getEncoder().encodeToString(
                 (props.getConsumerKey() + ":" + props.getConsumerSecret()).getBytes(StandardCharsets.UTF_8));
 
+        log.info("token endpoint {}/oauth/v1/generate?grant_type=client_credentials", props.getBaseUrl());
+
         return webClientBuilder.build()
                 .get()
                 .uri(props.getBaseUrl() + "/oauth/v1/generate?grant_type=client_credentials")
@@ -41,6 +43,6 @@ public class DarajaAuthService {
                     log.info("Daraja token refreshed, expires in {}s", resp.getExpiresIn());
                     return cachedToken;
                 })
-                .onErrorMap(e -> new DarajaApiException("Failed to get Daraja access token", e));
+                .onErrorMap(e -> new DarajaApiException("Failed to get Daraja access token", e.getCause()));
     }
 }
