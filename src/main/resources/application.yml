@@ -29,20 +29,20 @@ daraja:
   consumer-secret: ${DARAJA_CONSUMER_SECRET:LWg5GnyaNwi9psh4aonQH11kAUsMXpbgGGuSXRHkm42HGGMncPMwwzq27pP3kSvS}
   c2b:
     shortcode: ${DARAJA_C2B_SHORTCODE:4010159}
-    confirmation-url: ${DARAJA_C2B_CONFIRMATION_URL:https://aquaflow-service-production-9f01.up.railway.app/api/v1/c2b/confirmation}
-    validation-url: ${DARAJA_C2B_VALIDATION_URL:https://aquaflow-service-production-9f01.up.railway.app/api/v1/c2b/validation}
+    confirmation-url: ${DARAJA_C2B_CONFIRMATION_URL:aquaflow-mpesa-service-production-d742.up.railway.app/api/v1/c2b/confirmation}
+    validation-url: ${DARAJA_C2B_VALIDATION_URL:aquaflow-mpesa-service-production-d742.up.railway.app/api/v1/c2b/validation}
   b2b:
     initiator-name: ${DARAJA_B2B_INITIATOR:ISSANDRO7221}
     security-credential: ${DARAJA_B2B_SECURITY_CREDENTIAL:b7u/o1NBfJ7G5yfBbHqyO2TrtCjL2PspXDgXm9DZlGKzZS4PmtxYK1vJTdKs5dhfX0/50dF37TQTSED9OYOoOLg1gd2fxUCmp1mNofVTg9P83s2ncYjSdGlWjzXQwML4RvC+UxloInxGuv4Snai13VFpcXZjb6aqjA8xuRAZJjKtSt9TqHIWHS8GSByhOaeHdRyQtJg5hFusT1YXYNkMJhDeKt8ASuf/N6BOcEvsdiWXOcp3fQV49+wuYtR5k3aJg4EqNvvG/caM+G1e+e+MBbwRomhRLOtd1b+uXNG7v5WtqGROLIJx3QedkF4BvaCRfmoqcUEy9cJVNDIIa3xpkA==}
     sender-shortcode: ${DARAJA_B2B_SENDER_SHORTCODE:4010159}
     receiver-shortcode: ${DARAJA_B2B_RECEIVER_SHORTCODE:150770}
-    queue-timeout-url: ${DARAJA_B2B_TIMEOUT_URL:https://aquaflow-service-production-9f01.up.railway.app/api/v1/b2b/timeout}
-    result-url: ${DARAJA_B2B_RESULT_URL:https://aquaflow-service-production-9f01.up.railway.app/api/v1/b2b/result}
+    queue-timeout-url: ${DARAJA_B2B_TIMEOUT_URL:aquaflow-mpesa-service-production-d742.up.railway.app/api/v1/b2b/timeout}
+    result-url: ${DARAJA_B2B_RESULT_URL:aquaflow-mpesa-service-production-d742.up.railway.app/api/v1/b2b/result}
     disbursement-percentage: ${DARAJA_B2B_DISBURSEMENT_PCT:50}
   stk:
     shortcode: ${STK_SHORTCODE:4010159}
     passkey: ${STK_PASSKEY:aa8ac9f83d70479cd5e3e00095275b6dafc6500343d404e160556612a4965c2a}
-    callback-url: ${STK_CALLBACK_URL:https://aquaflow-service-production-9f01.up.railway.app/api/v1/callback}
+    callback-url: ${STK_CALLBACK_URL:aquaflow-mpesa-service-production-d742.up.railway.app/api/v1/callback}
 
 aquaflow:
   water-tariff:
