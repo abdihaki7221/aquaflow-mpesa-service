@@ -39,7 +39,7 @@ public class C2BService {
             log.info("C2B Token length: {}, token: [{}]", token.length(), token);
 
             return webClientBuilder.build().post()
-                    .uri(props.getBaseUrl() + "/mpesa/c2b/v1/registerurl")
+                    .uri(props.getBaseUrl() + "/mpesa/c2b/v2/registerurl")
                     .header("Authorization", authHeader)
                     .header("Content-Type", "application/json")
                     .bodyValue(req)
