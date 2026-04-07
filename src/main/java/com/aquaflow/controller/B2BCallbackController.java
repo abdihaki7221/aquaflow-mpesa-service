@@ -1,7 +1,10 @@
 package com.aquaflow.controller;
 
 import com.aquaflow.dto.daraja.B2BResultPayload;
+import com.aquaflow.dto.response.ApiResponse;
 import com.aquaflow.dto.response.MpesaAckResponse;
+import com.aquaflow.entity.B2BTransaction;
+import com.aquaflow.repository.B2BTransactionRepository;
 import com.aquaflow.service.B2BService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/b2b")
 @RequiredArgsConstructor
@@ -17,6 +22,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class B2BCallbackController {
     private final B2BService b2bService;
+    private final B2BTransactionRepository b2bRepo;
 
     @PostMapping("/result")
     @Operation(summary = "B2B Result callback - responds immediately, processes in background")
@@ -41,5 +47,13 @@ public class B2BCallbackController {
                         error -> log.error("[B2B-Controller] Error processing B2B timeout: {}", error.getMessage())
                 );
         return Mono.just(MpesaAckResponse.accepted());
+    }
+
+    @GetMapping("/transactions")
+    @Operation(summary = "Get all B2B revenue sharing transactions")
+    public Mono<ApiResponse<List<B2BTransaction>>> getAllB2BTransactions() {
+        return b2bRepo.findAllByOrderByCreatedAtDesc()
+                .collectList()
+                .map(ApiResponse::ok);
     }
 }
