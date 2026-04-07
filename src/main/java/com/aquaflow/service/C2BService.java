@@ -34,10 +34,14 @@ public class C2BService {
                     .build();
 
             log.info("C2B Register URL request: {}", req);
+            String authHeader = "Bearer " + token.trim();
+            log.info("C2B Auth header: [{}]", authHeader);
+            log.info("C2B Token length: {}, token: [{}]", token.length(), token);
 
             return webClientBuilder.build().post()
                     .uri(props.getBaseUrl() + "/mpesa/c2b/v1/registerurl")
-                    .header("Authorization", "Bearer " + token)
+                    .header("Authorization", authHeader)
+                    .header("Content-Type", "application/json")
                     .bodyValue(req)
                     .exchangeToMono(response -> {
                         log.info("C2B Register URL status: {}", response.statusCode());
