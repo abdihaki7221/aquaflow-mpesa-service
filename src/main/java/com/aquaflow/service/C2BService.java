@@ -6,6 +6,7 @@ import com.aquaflow.dto.response.MpesaAckResponse;
 import com.aquaflow.entity.C2BTransaction;
 import com.aquaflow.exception.DarajaApiException;
 import com.aquaflow.repository.C2BTransactionRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,11 +32,32 @@ public class C2BService {
                     .confirmationURL(props.getC2b().getConfirmationUrl())
                     .validationURL(props.getC2b().getValidationUrl())
                     .build();
+
+            log.info("C2B Register URL request: {}", req);
+
             return webClientBuilder.build().post()
                     .uri(props.getBaseUrl() + "/mpesa/c2b/v1/registerurl")
                     .header("Authorization", "Bearer " + token)
-                    .bodyValue(req).retrieve().bodyToMono(C2BRegisterUrlResponse.class);
-        }).onErrorMap(e -> new DarajaApiException("C2B URL registration failed", e));
+                    .bodyValue(req)
+                    .exchangeToMono(response -> {
+                        log.info("C2B Register URL status: {}", response.statusCode());
+                        return response.bodyToMono(String.class)
+                                .doOnNext(body -> log.info("C2B Register URL response: {}", body))
+                                .flatMap(body -> {
+                                    if (response.statusCode().is2xxSuccessful()) {
+                                        try {
+                                            ObjectMapper mapper = new ObjectMapper();
+                                            return Mono.just(mapper.readValue(body, C2BRegisterUrlResponse.class));
+                                        } catch (Exception e) {
+                                            return Mono.error(new DarajaApiException("Failed to parse C2B response: " + body, e));
+                                        }
+                                    } else {
+                                        return Mono.error(new DarajaApiException("C2B URL registration failed [" + response.statusCode() + "]: " + body, null));
+                                    }
+                                });
+                    });
+        }).onErrorMap(e -> !(e instanceof DarajaApiException),
+                e -> new DarajaApiException("C2B URL registration failed", e));
     }
 
     public Mono<MpesaAckResponse> handleValidation(C2BCallbackPayload payload) {
